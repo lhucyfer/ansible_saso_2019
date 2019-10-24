@@ -1,0 +1,33 @@
+---
+- hosts: nodo1
+  tasks:
+  - name: Primera Linea
+    apt: 
+      name:
+        - wget
+        - lsb-release
+        - gnupg 
+        - rsync
+      state: present
+
+  - name: Segunda Linea
+    synchronize:
+      src: debconf-set-selections
+      dest: /root/
+      recursive: no
+      mode: push
+
+  - name: Llamada a la configuracion mysql
+    shell: debconf-set-selections < /root/debconf-set-selections
+
+  - name: Tercera Linea
+    apt:
+        deb: http://repo.mysql.com/mysql-apt-config_0.8.13-1_all.deb
+        state: present
+
+  - name: Cuarta Linea 
+    apt:
+      update_cache: yes
+      name: mysql-community-server
+      state: present
+ 

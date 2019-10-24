@@ -1,0 +1,15 @@
+{% for key, value in apache_vhosts.items() %}
+<VirtualHost *:80>
+  ServerName {{ key }}
+  DocumentRoot {{ value.documentroot }}
+{% if value.serveradmin is defined %}
+  ServerAdmin {{ value.serveradmin }}
+{% endif %}
+  <Directory "{{ value.documentroot }}">
+    AllowOverride All
+    Options FollowSymLinks
+    Order allow,deny
+    Allow from all
+  </Directory>
+</VirtualHost>
+{% endfor %}

@@ -1,0 +1,27 @@
+packages_lamp:
+  - apache2 
+  - mariadb-server
+  - mariadb-client
+  - libapache2-mod-php
+  - php-mysql
+  - python-mysqldb
+
+apache_modules:
+  - php7.3
+
+apache_default_siteconfig: "/etc/apache2/sites-available/000-default.conf"
+
+services: 
+  - mysql
+  - apache2
+
+mysql_users: 
+  myapp:
+    password: "mypass"
+    priv: "*.*:ALL,GRANT"
+
+apache_vhosts:
+  "_default_":
+    documentroot: "/www/domain"
+    localfiles: "./website_default/"
+    serveradmin: "moncho.mendez@uvigo.es"

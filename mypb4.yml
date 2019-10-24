@@ -1,0 +1,17 @@
+---
+- hosts: all
+
+  tasks:
+  - name: Exewcute several commands
+    shell: "{{ item }}"
+    loop: "{{ command_list }}"
+    register: aa
+
+  - name: Show results
+    debug:
+      var: aa
+
+  - name: Show results partially
+    debug:
+      msg: "{{ item.stdout }}"
+    loop: "{{ aa.results }}"

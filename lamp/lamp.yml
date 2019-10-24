@@ -1,0 +1,56 @@
+---
+- hosts: all
+  tasks: 
+    - name: Load configuration
+      include_vars: lamp_vars.yml
+
+    - name: Install required packages
+      apt: 
+        name: "{{ packages_lamp }}"
+        state: present
+
+    - name: Create mysql users
+      mysql_user:
+          name: "{{ item.key }}"
+          state: present 
+          password: "{{ item.value.password }}"
+          priv: "{{ item.value.priv }}"
+      loop: "{{ lookup('dict', mysql_users, wantlist=True) }}"
+
+    - name: Enable apache modules  
+      apache2_module:
+          name: "{{ item }}"
+          state: present 
+      loop: 
+        "{{ apache_modules }}"
+
+    - name: Create directories for websites
+      file:
+          path: "{{ item.value.documentroot }}"
+          state: directory
+      loop: "{{ lookup('dict', apache_vhosts, wantlist=True) }}"
+
+    - name: Install websites
+      synchronize:
+          src: "{{ item.value.localfiles }}"
+          dest: "{{ item.value.documentroot }}"
+          dirs: yes
+          mode: push
+      loop: "{{ lookup('dict', apache_vhosts, wantlist=True) }}"
+
+    - name: Disable apache default site configuration
+      shell: a2dissite 000-default
+
+    - name: Create configuration
+      template: 
+        src: vhosts.conf.j2
+        dest: "{{ apache_default_siteconfig }}"
+
+    - name: Disable apache default site configuration
+      shell: a2ensite 000-default
+
+    - name: Restart servers
+      service:
+          name: "{{ item }}"
+          state: restarted
+      loop: "{{ services }}"

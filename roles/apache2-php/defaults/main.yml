@@ -1,0 +1,15 @@
+---
+# defaults file for apache2-php
+packages_lamp:
+  - apache2 
+  - libapache2-mod-php
+  - php-mysql
+  - python-mysqldb
+
+apache_modules:
+  - php7.3
+
+apache_default_siteconfig: "/etc/apache2/sites-available/000-default.conf"
+
+services: 
+  - apache2

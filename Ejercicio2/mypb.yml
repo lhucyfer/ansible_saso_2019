@@ -1,0 +1,57 @@
+---
+- hosts: nodo1
+  vars:
+    apache_vhosts:
+      - {servername: "www.prueba.com", documentroot: "/var/www/prueba"}
+  
+  tasks: 
+  - name: Install required software
+    apt: 
+      name: 
+        - apache2
+        - php
+        - php-mysql
+        - libapache2-mod-php
+        - mariadb-client
+        - mariadb-server  
+      state: latest
+
+  - name: Create user
+    mysql_user:
+      name: myapp
+      password: mypass
+      priv: '*.*:ALL,GRANT'
+      state: present
+
+  - name: Create directory
+    file:
+      path: /var/www/prueba/
+      mode: 0775
+
+  - name: Enable Apache PHP module
+    become: yes
+    apache2_module:
+      name: php7
+      state: present
+      force: True
+
+  - name: Write the apache VirtualHosts config file
+    template: src=vhosts.conf.j2 dest=/etc/apache2/sites-available/vhosts
+  
+  - name: Activate sites defined in vhosts file
+    shell: a2ensite vhosts
+  
+  - name: Copy Index
+    synchronize:
+      src: index.php
+      dest: /var/www/prueba/
+      recursive: no
+      mode: push
+
+  - name: Restart Apache and MariaDB
+    service: 
+      name:
+        - apache2 
+        - mariadb
+      state: restarted
+

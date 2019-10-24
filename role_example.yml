@@ -1,0 +1,14 @@
+---
+- hosts: all
+  vars:
+    apache_vhosts:
+      "_default_":
+        documentroot: "/www/domain"
+        localfiles: "./website_default/"
+        serveradmin: "moncho.mendez@uvigo.es"
+  tasks:
+    - name: Install apache and PHP calling apache2.php role
+      include_role: 
+        name: apache2-php
+      with_vars: 
+        apache_vhosts
