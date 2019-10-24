@@ -1,19 +1,11 @@
 #   Ansible scripts
+This repository contains Ansible
+playbook files. The files has been
+developed as materials from a subject
+(Advanced System Administration) at
+ESEI (Escuela Superior de ingeniería
+Informática)
 
-
-* lista 1
-* lista 2
-
-```java
-import java.lang.*;
-
-public class Main{
-    public static void main(String args){
-
-        System.out.println("Hello world");
-    }
-}
-```
 ## Usage
 
 ## Author
